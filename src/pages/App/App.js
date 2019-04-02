@@ -20,7 +20,8 @@ class App extends Component {
     return {
       selColorIdx: 0,
       guesses: [this.getNewGuess()],
-      code: this.genCode()
+      code: this.genCode(),
+      elapsedTime: 0
     };
   }
 
@@ -42,6 +43,10 @@ class App extends Component {
     // if winner, return num guesses, otherwise 0 (no winner)
     let lastGuess = this.state.guesses.length - 1;
     return this.state.guesses[lastGuess].score.perfect === 4 ? lastGuess + 1 : 0;
+  }
+
+  handleTimerUpdate = () => {
+    this.setState((curState) => ({elapsedTime: ++curState.elapsedTime}));
   }
 
   handleDifficultyChange = (level) => {
@@ -152,9 +157,11 @@ class App extends Component {
               selColorIdx={this.state.selColorIdx}
               guesses={this.state.guesses}
               handleColorSelection={this.handleColorSelection}
+              elapsedTime={this.state.elapsedTime}
               handleNewGameClick={this.handleNewGameClick}
               handlePegClick={this.handlePegClick}
               handleScoreClick={this.handleScoreClick}
+              handleTimerUpdate={this.handleTimerUpdate}
             />
           } />
           <Route exact path='/settings' render={props => 
