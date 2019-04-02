@@ -4,12 +4,16 @@ import GamePage from '../../pages/GamePage/GamePage';
 import { Route, Switch } from 'react-router-dom';
 import SettingsPage from '../SettingsPage/SettingsPage';
 
-const colors = ['#7CCCE5', '#FDE47F', '#E04644', '#B576AD'];
+const colors = {
+  Easy: ['#7CCCE5', '#FDE47F', '#E04644', '#B576AD'],
+  Moderate: ['#7CCCE5', '#FDE47F', '#E04644', '#B576AD', '#B7D968'],
+  Difficult: ['#7CCCE5', '#FDE47F', '#E04644', '#B576AD', '#B7D968', '#555E7B']
+};
 
 class App extends Component {
   constructor() {
     super();
-    this.state = this.getInitialState();
+    this.state = {...this.getInitialState(), difficulty: 'Easy'};
   }
 
   getInitialState() {
@@ -38,6 +42,10 @@ class App extends Component {
     // if winner, return num guesses, otherwise 0 (no winner)
     let lastGuess = this.state.guesses.length - 1;
     return this.state.guesses[lastGuess].score.perfect === 4 ? lastGuess + 1 : 0;
+  }
+
+  handleDifficultyChange = (level) => {
+    this.setState({difficulty: level});
   }
 
   handleColorSelection = (colorIdx) => {
@@ -134,13 +142,13 @@ class App extends Component {
   render() {
     let winTries = this.getWinTries();
     return (
-      <div className="App">
-        <header className='App-header-footer'>R E A C T &nbsp;&nbsp;&nbsp;  M A S T E R M I N D</header>
+      <div>
+        <header className='header-footer'>R E A C T &nbsp;&nbsp;&nbsp;  M A S T E R M I N D</header>
         <Switch>
           <Route exact path='/' render={() =>
             <GamePage
               winTries={winTries}
-              colors={colors}
+              colors={colors[this.state.difficulty]}
               selColorIdx={this.state.selColorIdx}
               guesses={this.state.guesses}
               handleColorSelection={this.handleColorSelection}
@@ -150,7 +158,13 @@ class App extends Component {
             />
           } />
           <Route exact path='/settings' render={props => 
-            <SettingsPage {...props} />
+            <SettingsPage
+              {...props} 
+              colorsLookup={colors}
+              difficulty={this.state.difficulty}
+              handleDifficultyChange={this.handleDifficultyChange}
+              handleNewGameClick={this.handleNewGameClick}
+            />
           } />
         </Switch>
       </div>
